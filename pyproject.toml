@@ -1,0 +1,46 @@
+[project]
+name = "opsib-receipt-exceptions"
+version = "0.1.0"
+description = "OPSiB backend assessment: retail data ingestion, receipt-shortfall detection, employee routing and task workflow"
+readme = "README.md"
+requires-python = ">=3.12,<3.14"
+dependencies = [
+    "fastapi>=0.115",
+    "uvicorn[standard]>=0.30",
+    "sqlalchemy>=2.0.30",
+    "psycopg[binary]>=3.2",
+    "alembic>=1.13",
+    "pydantic>=2.7",
+    "pydantic-settings>=2.3",
+    "python-multipart>=0.0.9",
+]
+
+[project.optional-dependencies]
+# Only needed if AI_PROVIDER=claude. The service runs (and all tests pass) without it.
+ai = ["anthropic>=2.0"]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.2",
+    "httpx2>=1.0",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra --strict-markers"
+markers = [
+    "db: needs a PostgreSQL database (TEST_DATABASE_URL)",
+]
+filterwarnings = ["error::DeprecationWarning:app.*"]
+
+[tool.uv]
+package = false
+
+[tool.ruff]
+line-length = 120
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "SIM"]
+# B008: FastAPI's Depends/File/Query defaults are the framework's idiom.
+ignore = ["B008"]

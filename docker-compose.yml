@@ -1,0 +1,18 @@
+# Local PostgreSQL for development and tests (alternative to scripts/dev_postgres.sh).
+# Dev only: trust auth, bound to localhost.
+services:
+  db:
+    image: postgres:17
+    environment:
+      POSTGRES_USER: opsib
+      POSTGRES_DB: opsib
+      POSTGRES_HOST_AUTH_METHOD: trust
+    ports:
+      - "127.0.0.1:55433:5432"
+    volumes:
+      - ./docker/initdb:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U opsib -d opsib"]
+      interval: 2s
+      timeout: 3s
+      retries: 20
